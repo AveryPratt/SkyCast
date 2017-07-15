@@ -1,5 +1,22 @@
-﻿@{
+﻿@using SkyCast.Models
+@using Newtonsoft.Json
+
+@model WeatherResult
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<a href="">Get Data</a>
+@using (Html.BeginForm("Geolocation", "Home", FormMethod.Post))
+{
+    <input type="text" name="location" value="" placeholder="Location" />
+    <input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
+}
+
+@if (Model.report != null)
+{
+    foreach (Datum datum in Model.report.hourly.data)
+    {
+        <p>@datum.apparentTemperature</p>
+    }
+}
