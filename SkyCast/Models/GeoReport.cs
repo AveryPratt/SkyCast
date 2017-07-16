@@ -76,10 +76,4 @@ namespace SkyCast.Models
         public List<Result> results { get; set; }
         public string status { get; set; }
     }
-
-    public class GeoResult
-    {
-        public string name { get; set; }
-		public GeoReport report { get; set; }
-	}
 }

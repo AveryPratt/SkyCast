@@ -110,10 +110,4 @@ namespace SkyCast.Models
 		public Daily daily { get; set; }
 		public Flags flags { get; set; }
     }
-    
-    public class WeatherResult
-    {
-        public WeatherReport report { get; set; }
-        public GeoResult geoResult { get; set; }
-    }
 }

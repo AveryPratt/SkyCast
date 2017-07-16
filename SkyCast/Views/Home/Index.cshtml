@@ -4,8 +4,9 @@
 
 @{
 	WeatherReport weatherReport = TempData["weatherReport"] as WeatherReport;
-	GeoResult geoResult = TempData["geoResult"] as GeoResult;
+	GeoReport geoResult = TempData["geoReport"] as GeoReport;
 	string errorMessage = TempData["errorMessage"] as String;
+	string location = TempData["location"] as String;
 	ViewBag.Title = "Home Page";
 }
 
@@ -25,7 +26,7 @@
 	DateTime currentTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 	currentTime = currentTime.AddSeconds(weatherReport.currently.time).ToLocalTime();
 	<div>
-		<h3>Current Weather for @geoResult.name</h3>
+		<h3>Current Weather for @location</h3>
 		<ul>
 			<li id="apparentTemperature">apparentTemperature: @weatherReport.currently.apparentTemperature</li>
 			<li id="cloudCover">cloudCover: @weatherReport.currently.cloudCover</li>
@@ -51,7 +52,7 @@
 		DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 		time = time.AddSeconds(datum.time).ToLocalTime();
 		<div>
-			<h3>Weather on @time.ToShortDateString() for @geoResult.name</h3>
+			<h3>Weather on @time.ToShortDateString() for @location</h3>
 			<ul>
 				<li id="apparentTemperatureMaxDaily @datum.time">apparentTemperatureMax: @datum.apparentTemperatureMax</li>
 				<li id="apparentTemperatureMinDaily @datum.time">apparentTemperatureMin: @datum.apparentTemperatureMin</li>
@@ -80,7 +81,7 @@
 		DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 		time = time.AddSeconds(datum.time).ToLocalTime();
 		<div>
-			<h3>Weather at @time.ToShortTimeString() for @geoResult.name</h3>
+			<h3>Weather at @time.ToShortTimeString() for @location</h3>
 			<ul>
 				<li id="apparentTemperatureHourly @datum.time">apparentTemperature: @datum.apparentTemperature</li>
 				<li id="cloudCoverHourly @datum.time">cloudCover: @datum.cloudCover</li>

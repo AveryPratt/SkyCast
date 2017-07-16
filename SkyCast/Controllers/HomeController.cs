@@ -14,6 +14,7 @@ namespace SkyCast.Controllers
     {
         public ActionResult Geolocation(string location)
         {
+			TempData["location"] = location;
 			string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
             string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
 
@@ -28,12 +29,7 @@ namespace SkyCast.Controllers
                         string geoJson = response.Content.ReadAsStringAsync().Result;
                         GeoReport geoReport = JsonConvert.DeserializeObject<GeoReport>(geoJson);
                         Location coordinates = geoReport.results.First().geometry.location;
-                        GeoResult geoResult = new GeoResult()
-                        {
-                            name = location,
-							report = geoReport
-                        };
-						TempData["geoResult"] = geoResult;
+						TempData["geoReport"] = geoReport;
                         return this.RedirectToAction("WeatherForecast");
                     }
 					throw new HttpException("Bad Request");
@@ -50,11 +46,11 @@ namespace SkyCast.Controllers
         {
             string weatherKey = "319cbb1ff967b87cc559b2e8308d0ddc";
             string weatherUri;
-			GeoResult geoResult = TempData["geoResult"] as GeoResult;
+			GeoReport geoReport = TempData["geoReport"] as GeoReport;
 
 			try
 			{
-				Location coordinates = geoResult.report.results.First().geometry.location;
+				Location coordinates = geoReport.results.First().geometry.location;
 				weatherUri = String.Format("https://api.darksky.net/forecast/{0}/{1},{2}", weatherKey, coordinates.lat, coordinates.lng);
 			}
             catch (Exception ex)
