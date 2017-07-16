@@ -56,15 +56,15 @@ namespace SkyCast.Models
 
     public class Geometry
     {
-        public Bounds bounds { get; set; }
+        //public Bounds bounds { get; set; }
         public Location location { get; set; }
         public string location_type { get; set; }
-        public Viewport viewport { get; set; }
+        //public Viewport viewport { get; set; }
     }
 
     public class Result
     {
-        public List<AddressComponent> address_components { get; set; }
+        //public List<AddressComponent> address_components { get; set; }
         public string formatted_address { get; set; }
         public Geometry geometry { get; set; }
         public string place_id { get; set; }

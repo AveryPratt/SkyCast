@@ -2,19 +2,14 @@
 @using Newtonsoft.Json
 @using System.Web.Script.Serialization;
 
-@model object
+@model JsonResult
 
 @{
 	WeatherResult weatherResult = new WeatherResult();
-	string message = "";
-	if (Model.GetType() == typeof(JsonResult) && ((JsonResult)Model).Data != null)
+	if (((JsonResult)Model).Data != null)
 	{
 		string jsonStr = ((string[])((JsonResult)Model).Data).First().ToString();
 		weatherResult = new JavaScriptSerializer().Deserialize<WeatherResult>(jsonStr);
-	}
-	else
-	{
-		message = Model.ToString();
 	}
 	ViewBag.Title = "Home Page";
 }
@@ -49,8 +44,4 @@
 		</ul>
 		<p>Coordinates: @weatherResult.report.latitude lat, @weatherResult.report.longitude lng.</p>
 	</div>
-}
-else
-{
-	<div><p>@message</p></div>
 }

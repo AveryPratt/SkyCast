@@ -78,10 +78,6 @@ namespace SkyCast.Controllers
 							report = JsonConvert.DeserializeObject<WeatherReport>(weatherJson),
 							geoResult = null
                         };
-
-						weatherResult.report.daily = null;
-						weatherResult.report.hourly = null;
-
 						string jsonObject = new JavaScriptSerializer().Serialize(weatherResult);
 						return this.RedirectToAction("Index", Json(jsonObject));
                     }
@@ -94,7 +90,7 @@ namespace SkyCast.Controllers
 			return this.RedirectToAction("Index", (object)"Could not find weather data.");
 		}
 
-		public ActionResult Index(object model)
+		public ActionResult Index(JsonResult model)
 		{
 			return View(model);
 		}
