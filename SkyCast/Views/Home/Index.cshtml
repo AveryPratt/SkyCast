@@ -1,10 +1,22 @@
 ﻿@using SkyCast.Models
 @using Newtonsoft.Json
+@using System.Web.Script.Serialization;
 
-@model WeatherResult
+@model object
 
 @{
-    ViewBag.Title = "Home Page";
+	WeatherResult weatherResult = new WeatherResult();
+	string message = "";
+	if (Model is JsonResult && ((JsonResult)Model).Data != null)
+	{
+		string jsonStr = ((string[])((JsonResult)Model).Data).First().ToString();
+		weatherResult = new JavaScriptSerializer().Deserialize<WeatherResult>(jsonStr);
+	}
+	else
+	{
+		message = Model.ToString();
+	}
+	ViewBag.Title = "Home Page";
 }
 
 @using (Html.BeginForm("Geolocation", "Home", FormMethod.Post))
@@ -13,10 +25,28 @@
     <input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
 }
 
-@if (Model.report != null)
+@if (weatherResult.report != null)
 {
-    foreach (Datum datum in Model.report.hourly.data)
-    {
-        <p>@datum.apparentTemperature</p>
-    }
+	<div>
+		@*<h3>Current Weather for @weatherResult.geoResult.name</h3>*@
+		<ul>
+			<li>apparentTemperature: @weatherResult.report.currently.apparentTemperature</li>
+			<li>cloudCover: @weatherResult.report.currently.cloudCover</li>
+			<li>dewPoint: @weatherResult.report.currently.dewPoint</li>
+			<li>humidity: @weatherResult.report.currently.humidity</li>
+			<li>icon: @weatherResult.report.currently.icon</li>
+			<li>ozone: @weatherResult.report.currently.ozone</li>
+			<li>precipIntensity: @weatherResult.report.currently.precipIntensity</li>
+			<li>precipProbability: @weatherResult.report.currently.precipProbability</li>
+			<li>pressure: @weatherResult.report.currently.pressure</li>
+			<li>summary: @weatherResult.report.currently.summary</li>
+			<li>temperature: @weatherResult.report.currently.temperature</li>
+			<li>time: @weatherResult.report.currently.time</li>
+			<li>uvIndex: @weatherResult.report.currently.uvIndex</li>
+			<li>windBearing: @weatherResult.report.currently.windBearing</li>
+			<li>windGust: @weatherResult.report.currently.windGust</li>
+			<li>windSpeed: @weatherResult.report.currently.windSpeed</li>
+		</ul>
+		<p>Coordinates: @weatherResult.report.latitude lat, @weatherResult.report.longitude lng.</p>
+	</div>
 }

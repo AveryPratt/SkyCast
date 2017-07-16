@@ -40,10 +40,10 @@ namespace SkyCast.Controllers
             }
             catch (Exception ex)
             {
-                return this.RedirectToAction("Index", "Could not find location.");
-            }
-            return null;
-        }
+
+			}
+			return this.RedirectToAction("Index", (object)"Could not find location.");
+		}
 
         public ActionResult WeatherForecast(JsonResult jsonResult)
         {
@@ -73,11 +73,15 @@ namespace SkyCast.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         string weatherJson = response.Content.ReadAsStringAsync().Result;
-                        WeatherResult weatherResult = new WeatherResult()
-                        {
-                            report = JsonConvert.DeserializeObject<WeatherReport>(weatherJson),
-							geoResult = geoResult
+						WeatherResult weatherResult = new WeatherResult()
+						{
+							report = JsonConvert.DeserializeObject<WeatherReport>(weatherJson),
+							geoResult = null
                         };
+
+						weatherResult.report.daily = null;
+						weatherResult.report.hourly = null;
+
 						string jsonObject = new JavaScriptSerializer().Serialize(weatherResult);
 						return this.RedirectToAction("Index", Json(jsonObject));
                     }
@@ -85,17 +89,22 @@ namespace SkyCast.Controllers
             }
             catch (Exception ex)
             {
-                return this.RedirectToAction("Index", "Could not find weather data.");
-            }
-            return null;
-        }
 
-        public ActionResult Index(WeatherResult model)
+			}
+			return this.RedirectToAction("Index", (object)"Could not find weather data.");
+		}
+
+        public ActionResult Index(JsonResult model)
         {
             return View(model);
-        }
+		}
 
-        public ActionResult About()
+		public ActionResult Index(object model)
+		{
+			return View(model);
+		}
+
+		public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
 
