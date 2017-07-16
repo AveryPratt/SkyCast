@@ -7,7 +7,7 @@
 @{
 	WeatherResult weatherResult = new WeatherResult();
 	string message = "";
-	if (Model is JsonResult && ((JsonResult)Model).Data != null)
+	if (Model.GetType() == typeof(JsonResult) && ((JsonResult)Model).Data != null)
 	{
 		string jsonStr = ((string[])((JsonResult)Model).Data).First().ToString();
 		weatherResult = new JavaScriptSerializer().Deserialize<WeatherResult>(jsonStr);
@@ -49,4 +49,8 @@
 		</ul>
 		<p>Coordinates: @weatherResult.report.latitude lat, @weatherResult.report.longitude lng.</p>
 	</div>
+}
+else
+{
+	<div><p>@message</p></div>
 }

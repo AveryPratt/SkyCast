@@ -94,11 +94,6 @@ namespace SkyCast.Controllers
 			return this.RedirectToAction("Index", (object)"Could not find weather data.");
 		}
 
-        public ActionResult Index(JsonResult model)
-        {
-            return View(model);
-		}
-
 		public ActionResult Index(object model)
 		{
 			return View(model);
