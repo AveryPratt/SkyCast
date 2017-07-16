@@ -14,7 +14,7 @@ namespace SkyCast.Controllers
     {
         public ActionResult Geolocation(string location)
         {
-            string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
+			string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
             string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
 
             // call Geo API
@@ -33,35 +33,34 @@ namespace SkyCast.Controllers
                             name = location,
 							report = geoReport
                         };
-						string jsonObj = new JavaScriptSerializer().Serialize(geoResult);
-                        return this.RedirectToAction("WeatherForecast", Json(jsonObj));
+						TempData["geoResult"] = geoResult;
+                        return this.RedirectToAction("WeatherForecast");
                     }
+					throw new HttpException("Bad Request");
                 }
             }
             catch (Exception ex)
-            {
-
+			{
+				TempData["errorMessage"] = "Could not find location.";
 			}
-			return this.RedirectToAction("Index", (object)"Could not find location.");
+			return this.RedirectToAction("Index");
 		}
 
         public ActionResult WeatherForecast(JsonResult jsonResult)
         {
             string weatherKey = "319cbb1ff967b87cc559b2e8308d0ddc";
             string weatherUri;
-            GeoResult geoResult;
+			GeoResult geoResult = TempData["geoResult"] as GeoResult;
 
-            // get coordinates for location
-            try
-            {
-				string jsonStr = ((string[])jsonResult.Data).First().ToString();
-				geoResult = new JavaScriptSerializer().Deserialize<GeoResult>(jsonStr);
+			try
+			{
 				Location coordinates = geoResult.report.results.First().geometry.location;
-                weatherUri = String.Format("https://api.darksky.net/forecast/{0}/{1},{2}", weatherKey, coordinates.lat, coordinates.lng);
-            }
+				weatherUri = String.Format("https://api.darksky.net/forecast/{0}/{1},{2}", weatherKey, coordinates.lat, coordinates.lng);
+			}
             catch (Exception ex)
-            {
-                return this.RedirectToAction("Index", "Could not find coordinates for location.");
+			{
+				TempData["errorMessage"] = "Could not find coordinates for location.";
+				return this.RedirectToAction("Index");
             }
 
             // call Weather API
@@ -73,26 +72,25 @@ namespace SkyCast.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         string weatherJson = response.Content.ReadAsStringAsync().Result;
-						WeatherResult weatherResult = new WeatherResult()
-						{
-							report = JsonConvert.DeserializeObject<WeatherReport>(weatherJson),
-							geoResult = null
-                        };
-						string jsonObject = new JavaScriptSerializer().Serialize(weatherResult);
-						return this.RedirectToAction("Index", Json(jsonObject));
+						WeatherReport weatherReport = JsonConvert.DeserializeObject<WeatherReport>(weatherJson);
+						TempData["weatherReport"] = weatherReport;
                     }
+					else
+					{
+						throw new HttpException("Bad Request");
+					}
                 }
             }
             catch (Exception ex)
             {
-
+				TempData["errorMessage"] = "Could not find weather data.";
 			}
-			return this.RedirectToAction("Index", (object)"Could not find weather data.");
+			return this.RedirectToAction("Index");
 		}
 
-		public ActionResult Index(JsonResult model)
+		public ActionResult Index()
 		{
-			return View(model);
+			return View();
 		}
 
 		public ActionResult About()
