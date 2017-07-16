@@ -106,9 +106,9 @@ namespace SkyCast.Models
         public string timezone { get; set; }
         public double offset { get; set; }
         public Currently currently { get; set; }
-        public Hourly hourly { get; set; }
-        public Daily daily { get; set; }
-        public Flags flags { get; set; }
+		public Hourly hourly { get; set; }
+		public Daily daily { get; set; }
+		public Flags flags { get; set; }
     }
     
     public class WeatherResult
