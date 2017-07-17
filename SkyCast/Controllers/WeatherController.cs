@@ -28,12 +28,21 @@ namespace SkyCast.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Query query = db.queries.Find(id);
+
+			var qu = from q in db.queries
+					 join wr in db.weatherReports on q.weatherReport equals wr
+					 join gr in db.geoReports on q.geoReport equals gr
+					 select new Query()
+					 {
+						 weatherReport = wr,
+						 geoReport = gr
+					 };
             if (query == null)
             {
                 return HttpNotFound();
-            }
-            return View(query);
-        }
+			}
+			return this.RedirectToAction("Index", "Home");
+		}
 
 		//// GET: Weather/Create
 		//public ActionResult Create()
@@ -76,7 +85,7 @@ namespace SkyCast.Controllers
 				db.SaveChangesAsync();
 				Session.Remove("query");
 				TempData["errorMessage"] = "Data saved successfully.";
-				return RedirectToAction("Index", "Home");
+				return this.RedirectToAction("Index", "Home");
             }
 			TempData["errorMessage"] = "Could not save data.";
 			return this.RedirectToAction("Index", "Home");

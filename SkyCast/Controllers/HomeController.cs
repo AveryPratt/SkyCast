@@ -15,7 +15,7 @@ namespace SkyCast.Controllers
         public ActionResult Geolocation(string location, string dateTime)
         {
 			TempData["location"] = location;
-			TempData["dateTime"] = Convert.ToDateTime(dateTime);
+			TempData["dateTime"] = String.IsNullOrEmpty(dateTime) ? null : (DateTime?)Convert.ToDateTime(dateTime);
 			string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
 			string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
 			// call Geo API
