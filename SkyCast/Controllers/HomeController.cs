@@ -81,7 +81,14 @@ namespace SkyCast.Controllers
             {
 				TempData["errorMessage"] = "Could not find weather data.";
 			}
-			return this.RedirectToAction("Index");
+			Query query = new Query()
+			{
+				location = TempData["location"] as String,
+				geoReport = TempData["geoReport"] as GeoReport,
+				weatherReport = TempData["weatherReport"] as WeatherReport
+			};
+			TempData["query"] = query;
+			return this.RedirectToAction("Create", "Weather");
 		}
 
 		public ActionResult Index()

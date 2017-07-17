@@ -6,8 +6,9 @@ using System.Web;
 namespace SkyCast.Models
 {
     public class Currently
-    {
-        public int time { get; set; }
+	{
+		public int Id { get; set; }
+		public int time { get; set; }
         public string summary { get; set; }
         public string icon { get; set; }
         public double precipIntensity { get; set; }
@@ -26,8 +27,9 @@ namespace SkyCast.Models
     }
 
     public class Datum
-    {
-        public int time { get; set; }
+	{
+		public int Id { get; set; }
+		public int time { get; set; }
         public string summary { get; set; }
         public string icon { get; set; }
         public double precipIntensity { get; set; }
@@ -46,15 +48,17 @@ namespace SkyCast.Models
     }
 
     public class Hourly
-    {
-        public string summary { get; set; }
+	{
+		public int Id { get; set; }
+		public string summary { get; set; }
         public string icon { get; set; }
-        public List<Datum> data { get; set; }
+        public virtual ICollection<Datum> data { get; set; }
     }
 
     public class Datum2
-    {
-        public int time { get; set; }
+	{
+		public int Id { get; set; }
+		public int time { get; set; }
         public string summary { get; set; }
         public string icon { get; set; }
         public int sunriseTime { get; set; }
@@ -87,27 +91,30 @@ namespace SkyCast.Models
     }
 
     public class Daily
-    {
-        public string summary { get; set; }
+	{
+		public int Id { get; set; }
+		public string summary { get; set; }
         public string icon { get; set; }
-        public List<Datum2> data { get; set; }
+        public virtual ICollection<Datum2> data { get; set; }
     }
 
     public class Flags
-    {
-        public List<string> sources { get; set; }
+	{
+		public int Id { get; set; }
+		public ICollection<string> sources { get; set; }
         public string units { get; set; }
     }
 
     public class WeatherReport
-    {
-        public double latitude { get; set; }
+	{
+		public int Id { get; set; }
+		public double latitude { get; set; }
         public double longitude { get; set; }
         public string timezone { get; set; }
         public double offset { get; set; }
-        public Currently currently { get; set; }
-		public Hourly hourly { get; set; }
-		public Daily daily { get; set; }
-		public Flags flags { get; set; }
+        public virtual Currently currently { get; set; }
+		public virtual Hourly hourly { get; set; }
+		public virtual Daily daily { get; set; }
+		public virtual Flags flags { get; set; }
     }
 }
