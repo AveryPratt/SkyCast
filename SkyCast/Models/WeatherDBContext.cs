@@ -35,6 +35,7 @@ namespace SkyCast.Models
 	{
 		public int Id { get; set; }
 		public string location { get; set; }
+		public DateTime dateTime { get; set; }
 		public virtual WeatherReport weatherReport { get; set; }
 		public virtual GeoReport geoReport { get; set; }
 	}

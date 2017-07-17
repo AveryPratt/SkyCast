@@ -12,14 +12,14 @@ namespace SkyCast.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Geolocation(string location)
+        public ActionResult Geolocation(string location, string dateTime)
         {
 			TempData["location"] = location;
+			TempData["dateTime"] = Convert.ToDateTime(dateTime);
 			string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
-            string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
-
-            // call Geo API
-            try
+			string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
+			// call Geo API
+			try
             {
                 using (HttpClient client = new HttpClient())
                 {
@@ -47,11 +47,16 @@ namespace SkyCast.Controllers
             string weatherKey = "319cbb1ff967b87cc559b2e8308d0ddc";
             string weatherUri;
 			GeoReport geoReport = TempData["geoReport"] as GeoReport;
+			DateTime? dateTime = (DateTime?)TempData["datetime"];
 
 			try
 			{
 				Location coordinates = geoReport.results.First().geometry.location;
 				weatherUri = String.Format("https://api.darksky.net/forecast/{0}/{1},{2}", weatherKey, coordinates.lat, coordinates.lng);
+				if (dateTime != null)
+				{
+					weatherUri += "," + ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+				}
 			}
             catch (Exception ex)
 			{
@@ -87,12 +92,17 @@ namespace SkyCast.Controllers
 				geoReport = TempData["geoReport"] as GeoReport,
 				weatherReport = TempData["weatherReport"] as WeatherReport
 			};
-			TempData["query"] = query;
-			return this.RedirectToAction("Create", "Weather");
+			Session["query"] = query;
+			return this.RedirectToAction("Index");
 		}
 
 		public ActionResult Index()
 		{
+			//if (User.Identity.IsAuthenticated)
+			//{
+			//	WeatherDbContext db = new WeatherDbContext();
+			//	return View(db.queries.ToList());
+			//}
 			return View();
 		}
 

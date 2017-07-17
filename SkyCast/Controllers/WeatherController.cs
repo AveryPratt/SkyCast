@@ -44,12 +44,12 @@ namespace SkyCast.Controllers
 		// POST: Weather/Create
 		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
 		// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-		//[HttpPost]
-		//[ValidateAntiForgeryToken]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public ActionResult Create() //[Bind(Include = "Id,location")] Query query
 		{
-			Query query = TempData["query"] as Query;
-            if (ModelState.IsValid)
+			Query query = Session["query"] as Query;
+            if (query != null && ModelState.IsValid)
             {
                 db.queries.Add(query);
 				db.weatherReports.Add(query.weatherReport);
@@ -73,11 +73,13 @@ namespace SkyCast.Controllers
 					db.northeast2.Add(result.geometry.viewport.northeast);
 					db.southwest2.Add(result.geometry.viewport.southwest);
 				}
-                db.SaveChanges();
-                return RedirectToAction("Index");
+				db.SaveChangesAsync();
+				Session.Remove("query");
+				TempData["errorMessage"] = "Data saved successfully.";
+				return RedirectToAction("Index", "Home");
             }
-
-            return View(query);
+			TempData["errorMessage"] = "Could not save data.";
+			return this.RedirectToAction("Index", "Home");
         }
 
         // GET: Weather/Edit/5

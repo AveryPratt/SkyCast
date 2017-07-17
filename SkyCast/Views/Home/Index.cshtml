@@ -2,18 +2,23 @@
 @using Newtonsoft.Json
 @using System.Web.Script.Serialization;
 
+@model ICollection<Query>
+
 @{
 	WeatherReport weatherReport = TempData["weatherReport"] as WeatherReport;
-	GeoReport geoResult = TempData["geoReport"] as GeoReport;
+	GeoReport geoReport = TempData["geoReport"] as GeoReport;
 	string errorMessage = TempData["errorMessage"] as String;
 	string location = TempData["location"] as String;
+	Query query = Session["query"] as Query;
 	ViewBag.Title = "Home Page";
+	DateTime now = DateTime.Now;
 }
 
 @using (Html.BeginForm("Geolocation", "Home", FormMethod.Post, new { id = "getWeather" }))
 {
-    <input id="location" type="text" name="location" value="" placeholder="Location" />
-    <input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
+	<input id="locationInput" type="text" name="location" value="" placeholder="Location" />
+	<input id="datetimeInput" type="text" name="dateTime" class="datetimepicker">
+	<input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
 }
 
 @if (!String.IsNullOrEmpty(errorMessage))
@@ -21,12 +26,39 @@
 	<div id="errorMessage">@errorMessage</div>
 }
 
-@if (weatherReport != null && geoResult != null)
+@if (User.Identity.IsAuthenticated && Model != null)
+{
+	<div>
+		<ul>
+			@foreach (Query q in Model)
+			{
+				<li>
+					<div id="location_@q.Id">location: @q.location</div>
+					<div id="datetime_@q.Id">location: @q.dateTime</div>
+				</li>
+			}
+		</ul>
+	</div>
+}
+
+@if (weatherReport != null && geoReport != null)
 {
 	DateTime currentTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 	currentTime = currentTime.AddSeconds(weatherReport.currently.time).ToLocalTime();
+	Result result = geoReport.results.First();
+
 	<div>
-		<h3>Current Weather for @location</h3>
+		<h2>Geographical Information</h2>
+		<ul>
+			<li id="fullAddress">formatted_address: @result.formatted_address</li>
+			<li id="location_type">location_type: @result.geometry.location_type</li>
+			<li id="lat">lat: @result.geometry.location.lat</li>
+			<li id="lng">lng: @result.geometry.location.lng</li>
+		</ul>
+	</div>
+
+	<div>
+		<h2>Current Weather for @location</h2>
 		<ul>
 			<li id="apparentTemperature">apparentTemperature: @weatherReport.currently.apparentTemperature</li>
 			<li id="cloudCover">cloudCover: @weatherReport.currently.cloudCover</li>
@@ -47,59 +79,83 @@
 		</ul>
 	</div>
 
-	foreach (Datum2 datum in weatherReport.daily.data)
-	{
-		DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-		time = time.AddSeconds(datum.time).ToLocalTime();
-		<div>
-			<h3>Weather on @time.ToShortDateString() for @location</h3>
-			<ul>
-				<li id="apparentTemperatureMaxDaily @datum.time">apparentTemperatureMax: @datum.apparentTemperatureMax</li>
-				<li id="apparentTemperatureMinDaily @datum.time">apparentTemperatureMin: @datum.apparentTemperatureMin</li>
-				<li id="cloudCoverDaily @datum.time">cloudCover: @datum.cloudCover</li>
-				<li id="dewPointDaily @datum.time">dewPoint: @datum.dewPoint</li>
-				<li id="humidityDaily @datum.time">humidity: @datum.humidity</li>
-				<li id="iconDaily @datum.time">icon: @datum.icon</li>
-				<li id="ozoneDaily @datum.time">ozone: @datum.ozone</li>
-				<li id="precipIntensityDaily @datum.time">precipIntensity: @datum.precipIntensity</li>
-				<li id="precipProbabilityDaily @datum.time">precipProbability: @datum.precipProbability</li>
-				<li id="pressureDaily @datum.time">pressure: @datum.pressure</li>
-				<li id="summaryDaily @datum.time">summary: @datum.summary</li>
-				<li id="temperatureMaxDaily @datum.time">temperatureMax: @datum.temperatureMax</li>
-				<li id="temperatureMinDaily @datum.time">temperatureMin: @datum.temperatureMin</li>
-				<li id="timeDaily @datum.time">time: @time.ToString()</li>
-				<li id="uvIndexDaily @datum.time">uvIndex: @datum.uvIndex</li>
-				<li id="windBearingDaily @datum.time">windBearing: @datum.windBearing</li>
-				<li id="windGustDaily @datum.time">windGust: @datum.windGust</li>
-				<li id="windSpeedDaily @datum.time">windSpeed: @datum.windSpeed</li>
-			</ul>
-		</div>
-	}
+	<div>
+		<h2>Daily Forecast</h2>
+		<ul>
+			@foreach (Datum2 datum in weatherReport.daily.data)
+			{
+				DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+				time = time.AddSeconds(datum.time).ToLocalTime();
+				<li>
+					<h3>Weather on @time.ToShortDateString() for @location</h3>
+					<ul>
+						<li id="apparentTemperatureMaxDaily_@datum.Id">apparentTemperatureMax: @datum.apparentTemperatureMax</li>
+						<li id="apparentTemperatureMinDaily_@datum.Id">apparentTemperatureMin: @datum.apparentTemperatureMin</li>
+						<li id="cloudCoverDaily_@datum.Id">cloudCover: @datum.cloudCover</li>
+						<li id="dewPointDaily_@datum.Id">dewPoint: @datum.dewPoint</li>
+						<li id="humidityDaily_@datum.Id">humidity: @datum.humidity</li>
+						<li id="iconDaily_@datum.Id">icon: @datum.icon</li>
+						<li id="ozoneDaily_@datum.Id">ozone: @datum.ozone</li>
+						<li id="precipIntensityDaily_@datum.Id">precipIntensity: @datum.precipIntensity</li>
+						<li id="precipProbabilityDaily_@datum.Id">precipProbability: @datum.precipProbability</li>
+						<li id="pressureDaily_@datum.Id">pressure: @datum.pressure</li>
+						<li id="summaryDaily_@datum.Id">summary: @datum.summary</li>
+						<li id="temperatureMaxDaily_@datum.Id">temperatureMax: @datum.temperatureMax</li>
+						<li id="temperatureMinDaily_@datum.Id">temperatureMin: @datum.temperatureMin</li>
+						<li id="timeDaily_@datum.Id">time: @time.ToString()</li>
+						<li id="uvIndexDaily_@datum.Id">uvIndex: @datum.uvIndex</li>
+						<li id="windBearingDaily_@datum.Id">windBearing: @datum.windBearing</li>
+						<li id="windGustDaily_@datum.Id">windGust: @datum.windGust</li>
+						<li id="windSpeedDaily_@datum.Id">windSpeed: @datum.windSpeed</li>
+					</ul>
+				</li>
+			}
+		</ul>
+	</div>
 
-	foreach (Datum datum in weatherReport.hourly.data)
+	<div>
+		<h2>Hourly Forecast</h2>
+		<ul>
+			@foreach (Datum datum in weatherReport.hourly.data)
+			{
+				DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+				time = time.AddSeconds(datum.time).ToLocalTime();
+				<li>
+					<h3>Weather at @time.ToShortTimeString() for @location</h3>
+					<ul>
+						<li id="apparentTemperatureHourly_@datum.Id">apparentTemperature: @datum.apparentTemperature</li>
+						<li id="cloudCoverHourly_@datum.Id">cloudCover: @datum.cloudCover</li>
+						<li id="dewPointHourly_@datum.Id">dewPoint: @datum.dewPoint</li>
+						<li id="humidityHourly_@datum.Id">humidity: @datum.humidity</li>
+						<li id="iconHourly_@datum.Id">icon: @datum.icon</li>
+						<li id="ozoneHourly_@datum.Id">ozone: @datum.ozone</li>
+						<li id="precipIntensityHourly_@datum.Id">precipIntensity: @datum.precipIntensity</li>
+						<li id="precipProbabilityHourly_@datum.Id">precipProbability: @datum.precipProbability</li>
+						<li id="pressureHourly_@datum.Id">pressure: @datum.pressure</li>
+						<li id="summaryHourly_@datum.Id">summary: @datum.summary</li>
+						<li id="temperatureHourly_@datum.Id">temperature: @datum.temperature</li>
+						<li id="timeHourly_@datum.Id">time: @time.ToString()</li>
+						<li id="uvIndexHourly_@datum.Id">uvIndex: @datum.uvIndex</li>
+						<li id="windBearingHourly_@datum.Id">windBearing: @datum.windBearing</li>
+						<li id="windGustHourly_@datum.Id">windGust: @datum.windGust</li>
+						<li id="windSpeedHourly_@datum.Id">windSpeed: @datum.windSpeed</li>
+					</ul>
+				</li>
+			}
+		</ul>
+	</div>
+}
+else
+{
+	Session.Remove("query"); // query isn't being displayed
+}
+
+@if (User.Identity.IsAuthenticated && Session["query"] != null)
+{
+	using (Html.BeginForm("Create", "Weather", FormMethod.Post, query))
 	{
-		DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-		time = time.AddSeconds(datum.time).ToLocalTime();
-		<div>
-			<h3>Weather at @time.ToShortTimeString() for @location</h3>
-			<ul>
-				<li id="apparentTemperatureHourly @datum.time">apparentTemperature: @datum.apparentTemperature</li>
-				<li id="cloudCoverHourly @datum.time">cloudCover: @datum.cloudCover</li>
-				<li id="dewPointHourly @datum.time">dewPoint: @datum.dewPoint</li>
-				<li id="humidityHourly @datum.time">humidity: @datum.humidity</li>
-				<li id="iconHourly @datum.time">icon: @datum.icon</li>
-				<li id="ozoneHourly @datum.time">ozone: @datum.ozone</li>
-				<li id="precipIntensityHourly @datum.time">precipIntensity: @datum.precipIntensity</li>
-				<li id="precipProbabilityHourly @datum.time">precipProbability: @datum.precipProbability</li>
-				<li id="pressureHourly @datum.time">pressure: @datum.pressure</li>
-				<li id="summaryHourly @datum.time">summary: @datum.summary</li>
-				<li id="temperatureHourly @datum.time">temperature: @datum.temperature</li>
-				<li id="timeHourly @datum.time">time: @time.ToString()</li>
-				<li id="uvIndexHourly @datum.time">uvIndex: @datum.uvIndex</li>
-				<li id="windBearingHourly @datum.time">windBearing: @datum.windBearing</li>
-				<li id="windGustHourly @datum.time">windGust: @datum.windGust</li>
-				<li id="windSpeedHourly @datum.time">windSpeed: @datum.windSpeed</li>
-			</ul>
-		</div>
+		@Html.AntiForgeryToken();
+
+		<input type="submit" value="Save Data" class="btn btn-primary" />
 	}
 }
