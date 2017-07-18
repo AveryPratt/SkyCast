@@ -10,23 +10,20 @@ namespace SkyCast.Controllers
 		public ActionResult Index(string location, string dateTime)
 		{
 			ViewBag.Message = "Your home page.";
+			ViewBag.Controller = "Home";
 
 			if (User.Identity.IsAuthenticated)
 			{
 				return this.RedirectToAction("Index", "Weather", new { location = location, dateTime = dateTime });
 			}
-			
-			if (!String.IsNullOrEmpty(location))
-			{
-				TempData = APIHelper.GetGeoLocation(TempData, location, dateTime);
-				TempData = APIHelper.GetWeatherForecast(TempData);
-			}
 
-			Query query = new Query()
+			if (location != null) // empty string is acceptable
 			{
-				location = TempData["location"] as String,
-			};
-			Session["query"] = query;
+				TempDataDictionary data = TempData;
+				TempData["geoReport"] = APIHelper.GetGeoLocation(ref data, location, dateTime);
+				TempData["weatherReport"] = APIHelper.GetWeatherForecast(ref data, TempData["geoReport"] as GeoReport);
+				TempData = data;
+			}
 
 			return View();
 		}

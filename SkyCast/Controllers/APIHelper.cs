@@ -11,7 +11,7 @@ namespace SkyCast.Controllers
 {
 	public class APIHelper
 	{
-		public static TempDataDictionary GetGeoLocation(TempDataDictionary data, string location, string dateTime)
+		public static GeoReport GetGeoLocation(ref TempDataDictionary data, string location, string dateTime)
 		{
 			data["location"] = location;
 			try
@@ -21,7 +21,7 @@ namespace SkyCast.Controllers
 			catch (Exception ex)
 			{
 				data["errorMessage"] = "Unrecognizable date format.";
-				return data;
+				return null;
 			}
 			string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
 			string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
@@ -36,9 +36,7 @@ namespace SkyCast.Controllers
 						string geoJson = response.Content.ReadAsStringAsync().Result;
 						data["geoJson"] = geoJson;
 						GeoReport geoReport = JsonConvert.DeserializeObject<GeoReport>(geoJson);
-						Location coordinates = geoReport.results.First().geometry.location;
-						data["geoReport"] = geoReport;
-						return data;
+						return geoReport;
 					}
 					throw new HttpRequestException("Bad Request.");
 				}
@@ -47,14 +45,13 @@ namespace SkyCast.Controllers
 			{
 				data["errorMessage"] = "Could not find location.";
 			}
-			return data;
+			return null;
 		}
 
-		public static TempDataDictionary GetWeatherForecast(TempDataDictionary data)
+		public static WeatherReport GetWeatherForecast(ref TempDataDictionary data, GeoReport geoReport)
 		{
 			string weatherKey = "319cbb1ff967b87cc559b2e8308d0ddc";
 			string weatherUri;
-			GeoReport geoReport = data["geoReport"] as GeoReport;
 			DateTime? dateTime = (DateTime?)data["datetime"];
 
 			try
@@ -69,7 +66,7 @@ namespace SkyCast.Controllers
 			catch (Exception ex)
 			{
 				data["errorMessage"] = "Could not find coordinates for location.";
-				return data;
+				return null;
 			}
 
 			// call Weather API
@@ -83,8 +80,7 @@ namespace SkyCast.Controllers
 						string weatherJson = response.Content.ReadAsStringAsync().Result;
 						data["weatherJson"] = weatherJson;
 						WeatherReport weatherReport = JsonConvert.DeserializeObject<WeatherReport>(weatherJson);
-						data["weatherReport"] = weatherReport;
-						return data;
+						return weatherReport;
 					}
 					else
 					{
@@ -96,7 +92,7 @@ namespace SkyCast.Controllers
 			{
 				data["errorMessage"] = "Could not find weather data.";
 			}
-			return data;
+			return null;
 		}
 	}
 }

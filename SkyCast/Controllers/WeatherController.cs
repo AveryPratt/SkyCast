@@ -19,22 +19,39 @@ namespace SkyCast.Controllers
 		// GET: Weather
 		public ActionResult Index(string location, string dateTime)
 		{
+			ViewBag.Controller = "Weather";
+
 			if (!User.Identity.IsAuthenticated)
 			{
 				return this.RedirectToAction("Index", "Home", new { location = location, dateTime = dateTime });
 			}
 
-			if (!String.IsNullOrEmpty(location))
+			if (location != null) // empty string is acceptable
 			{
-				TempData = APIHelper.GetGeoLocation(TempData, location, dateTime);
-				TempData = APIHelper.GetWeatherForecast(TempData);
-			}
+				TempDataDictionary data = TempData;
+				TempData["geoReport"] = APIHelper.GetGeoLocation(ref data, location, dateTime);
+				TempData["weatherReport"] = APIHelper.GetWeatherForecast(ref data, TempData["geoReport"] as GeoReport);
+				TempData = data;
 
-			Query query = new Query()
-			{
-				location = TempData["location"] as String,
-			};
-			Session["query"] = query;
+				Query query = new Query()
+				{
+					location = TempData["location"] as String,
+					dateTime = TempData["dateTime"] as String
+				};
+				GeoResult geoResult = new GeoResult()
+				{
+					query = query,
+					geoJson = TempData["geoJson"] as String
+				};
+				WeatherResult weatherResult = new WeatherResult()
+				{
+					query = query,
+					weatherJson = TempData["weatherJson"] as String
+				};
+				Session["query"] = query;
+				Session["geoResult"] = geoResult;
+				Session["weatherResult"] = weatherResult;
+			}
 
 			List<Query> pastQueries = db.queries.ToList();
 			TempData["pastQueries"] = pastQueries;
@@ -49,7 +66,19 @@ namespace SkyCast.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Query query = db.queries.Find(id);
-			return this.RedirectToAction("Index", "Home");
+
+			GeoResult geoResult = db.geoResults.First(g => g.query.Id == query.Id);
+			WeatherResult weatherResult = db.weatherResults.First(w => w.query.Id == query.Id);
+
+			string geoJson = geoResult.geoJson;
+			string weatherJson = weatherResult.weatherJson;
+
+			TempData["geoReport"] = JsonConvert.DeserializeObject<GeoReport>(geoJson);
+			TempData["weatherReport"] = JsonConvert.DeserializeObject<WeatherReport>(weatherJson);
+
+			Session["query"] = query;
+
+			return this.RedirectToAction("Index");
 		}
 
 		// POST: Weather/Create
@@ -60,16 +89,25 @@ namespace SkyCast.Controllers
 		public ActionResult Create() //[Bind(Include = "Id,location")] Query query
 		{
 			Query query = Session["query"] as Query;
-            if (query != null && ModelState.IsValid)
+			GeoResult geoResult = Session["geoResult"] as GeoResult;
+			WeatherResult weatherResult = Session["weatherResult"] as WeatherResult;
+            if (query != null &&
+				geoResult != null &&
+				weatherResult != null &&
+				ModelState.IsValid)
             {
                 db.queries.Add(query);
+				db.geoResults.Add(geoResult);
+				db.weatherResults.Add(weatherResult);
 				db.SaveChanges();
 				Session.Remove("query");
+				Session.Remove("geoResult");
+				Session.Remove("weatherResult");
 				TempData["errorMessage"] = "Data saved successfully.";
-				return this.RedirectToAction("Index", "Home");
+				return this.RedirectToAction("Index", "Weather");
             }
 			TempData["errorMessage"] = "Could not save data.";
-			return this.RedirectToAction("Index", "Home");
+			return this.RedirectToAction("Index", "Weather");
         }
 
         // GET: Weather/Delete/5
