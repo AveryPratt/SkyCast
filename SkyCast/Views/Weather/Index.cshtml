@@ -1,0 +1,53 @@
+﻿@using SkyCast.Models
+
+@model IEnumerable<Query>
+
+@{
+	ViewBag.Title = "Index";
+	Query query = Session["query"] as Query;
+}
+
+@Html.Partial("_SubmissionPartial")
+
+<h3>Previous Results</h3>
+<table class="table">
+    <tr>
+        <th>
+			Location
+        </th>
+        <th>
+			Date
+		</th>
+    </tr>
+
+	@if (Model != null)
+	{
+		foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.location)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.dateTime)
+				</td>
+				<td>
+					@Html.ActionLink("View", "Details", new { id = item.Id }) |
+					@Html.ActionLink("Delete", "Delete", new { id = item.Id })
+				</td>
+			</tr>
+		}
+	}
+</table>
+
+@Html.Partial("_ResultsPartial")
+
+@if (Session["geoResult"] != null)
+{
+	using (Html.BeginForm("Create", "Weather", FormMethod.Post, query))
+	{
+		@Html.AntiForgeryToken();
+
+		<input type="submit" value="Save Data" class="btn btn-primary" />
+	}
+}
