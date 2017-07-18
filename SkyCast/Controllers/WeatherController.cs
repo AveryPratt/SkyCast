@@ -29,7 +29,7 @@ namespace SkyCast.Controllers
             }
             Query query = db.queries.Find(id);
 
-			var qu = from q in db.queries
+			IQueryable<Query> qu = from q in db.queries
 					 join wr in db.weatherReports on q.weatherReport equals wr
 					 join gr in db.geoReports on q.geoReport equals gr
 					 select new Query()
@@ -41,7 +41,7 @@ namespace SkyCast.Controllers
             {
                 return HttpNotFound();
 			}
-			return this.RedirectToAction("Index", "Home");
+			return this.RedirectToAction("Index", "Home", );
 		}
 
 		//// GET: Weather/Create

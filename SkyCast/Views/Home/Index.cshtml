@@ -16,8 +16,9 @@
 
 @using (Html.BeginForm("Geolocation", "Home", FormMethod.Post, new { id = "getWeather" }))
 {
-	<input id="locationInput" type="text" name="location" value="" placeholder="Location" />
-	<input id="datetimeInput" type="text" name="dateTime" class="datetimepicker">
+	<input id="locationInput" type="text" name="location" value="@location" placeholder="Location" />
+	@*<input id="datetimeInput" type="text" name="dateTime" value="" placeholder="Date" class="datetimepicker">*@
+	@Html.TextBox("dateTime", String.Format("{0:d}", now.ToShortDateString()), new { @class = "datefield", type = "date" });
 	<input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
 }
 

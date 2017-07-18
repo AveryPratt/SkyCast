@@ -15,7 +15,15 @@ namespace SkyCast.Controllers
         public ActionResult Geolocation(string location, string dateTime)
         {
 			TempData["location"] = location;
-			TempData["dateTime"] = String.IsNullOrEmpty(dateTime) ? null : (DateTime?)Convert.ToDateTime(dateTime);
+			try
+			{
+				TempData["dateTime"] = String.IsNullOrEmpty(dateTime) ? null : (DateTime?)Convert.ToDateTime(dateTime);
+			}
+			catch (Exception ex)
+			{
+				TempData["errorMessage"] = "Unrecognizable date";
+				return this.RedirectToAction("Index");
+			}
 			string geoKey = "AIzaSyAkI1hZCvx9yR-e3YcFAGb9AiaVovAfPpA";
 			string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
 			// call Geo API
@@ -32,10 +40,10 @@ namespace SkyCast.Controllers
 						TempData["geoReport"] = geoReport;
                         return this.RedirectToAction("WeatherForecast");
                     }
-					throw new HttpException("Bad Request");
+					throw new HttpRequestException("Bad Request");
                 }
             }
-            catch (Exception ex)
+            catch (HttpRequestException)
 			{
 				TempData["errorMessage"] = "Could not find location.";
 			}
@@ -78,11 +86,11 @@ namespace SkyCast.Controllers
                     }
 					else
 					{
-						throw new HttpException("Bad Request");
+						throw new HttpRequestException("Bad Request");
 					}
                 }
             }
-            catch (Exception ex)
+            catch (HttpRequestException)
             {
 				TempData["errorMessage"] = "Could not find weather data.";
 			}
@@ -96,14 +104,18 @@ namespace SkyCast.Controllers
 			return this.RedirectToAction("Index");
 		}
 
-		public ActionResult Index()
+		public ActionResult Index(ICollection<Query> queries = null)
 		{
-			//if (User.Identity.IsAuthenticated)
-			//{
-			//	WeatherDbContext db = new WeatherDbContext();
-			//	return View(db.queries.ToList());
-			//}
+			if (User.Identity.IsAuthenticated && queries != null)
+			{
+				return this.RedirectToAction("Details", "Weather");
+			}
 			return View();
+		}
+
+		public ActionResult Index(ICollection<Query> queries)
+		{
+			return View(queries);
 		}
 
 		public ActionResult About()
