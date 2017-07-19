@@ -22,3 +22,81 @@ select,
 textarea {
     max-width: 280px;
 }
+
+ul.horizontal {
+	text-align: center;
+}
+
+ul.bare {
+	list-style-type: none;
+}
+
+ul.shorter {
+	width: 50%;
+	margin: auto;
+}
+
+ul.short {
+	width: 75%;
+	margin: auto;
+}
+
+ul.large {
+	font-size: 24px;
+}
+
+li.horizontal {
+	display: inline;
+}
+
+.center {
+	text-align: center;
+}
+
+.hidden {
+	display: none;
+}
+
+.unhidden {
+	display: normal;
+}
+
+.pannel {
+	padding: 10px;
+}
+
+.outer-pannel {
+	border: 1px solid black;
+	padding-bottom: 30px;
+	background-color: aliceblue;
+	margin: 20px;
+	box-shadow: 5px 5px 5px #808080;
+}
+
+.inner-pannel {
+	background-color: white;
+	margin: 15px;
+	box-shadow: 0px 0px 10px #FFFFFF;
+}
+
+.special {
+	background-color: lightgoldenrodyellow !important;
+}
+
+a {
+	color: black;
+}
+
+a:hover {
+	color: darkgoldenrod;
+	text-decoration: none;
+}
+
+.btn-primary {
+	background-color: darkgoldenrod;
+	border-color: darkgoldenrod;
+}
+
+span {
+	color: red;
+}
