@@ -6,11 +6,19 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using SkyCast.Models;
+using Microsoft.Azure.KeyVault;
+using System.Web.Configuration;
 
 namespace SkyCast
 {
     public partial class Startup
     {
+		var kv = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(Utils.GetToken));
+
+		var sec = await kv.GetSecretAsync(WebConfigurationManager.AppSettings["SecretUri"]);
+
+		App_Start.Utils.EncryptSecret = sec.Value;
+
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
