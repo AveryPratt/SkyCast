@@ -42,7 +42,7 @@
 
 @Html.Partial("_ResultsPartial")
 
-@if (Session["geoResult"] != null)
+@if (Session["geoResult"] != null) // or weatherResult
 {
 	using (Html.BeginForm("Create", "Weather", FormMethod.Post, query))
 	{
