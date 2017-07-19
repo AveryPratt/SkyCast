@@ -12,78 +12,70 @@
 	currentTime = currentTime.AddSeconds(weatherReport.currently.time).ToLocalTime();
 	Result result = geoReport.results.First();
 
-	<div>
-		<h3>Location</h3>
-		<ul>
-			<li id="fullAddress">formatted_address: @result.formatted_address</li>
-			<li id="location_type">location_type: @result.geometry.location_type</li>
-			<li id="lat">lat: @result.geometry.location.lat</li>
-			<li id="lng">lng: @result.geometry.location.lng</li>
+	<div class="pannel outer-pannel">
+		<h1 class="center"><a id="addressLink">@result.formatted_address</a></h1>
+		<ul id="addressContent" class="pannel inner-pannel hidden center bare">
+			<li><h4>@result.geometry.location_type.ToLower() location</h4></li>
+			<li>(@result.geometry.location.lat, @result.geometry.location.lng)</li>
+			<li id="time">@currentTime.ToString()</li>
 		</ul>
 	</div>
 
-	<div>
-		<h3>Current Weather for @location</h3>
-		<ul>
-			<li id="apparentTemperature">apparentTemperature: @weatherReport.currently.apparentTemperature</li>
-			<li id="cloudCover">cloudCover: @weatherReport.currently.cloudCover</li>
-			<li id="dewPoint">dewPoint: @weatherReport.currently.dewPoint</li>
-			<li id="humidity">humidity: @weatherReport.currently.humidity</li>
-			<li id="icon">icon: @weatherReport.currently.icon</li>
-			<li id="ozone">ozone: @weatherReport.currently.ozone</li>
-			<li id="precipIntensity">precipIntensity: @weatherReport.currently.precipIntensity</li>
-			<li id="precipProbability">precipProbability: @weatherReport.currently.precipProbability</li>
-			<li id="pressure">pressure: @weatherReport.currently.pressure</li>
+	<div class="pannel outer-pannel">
+		<h2><a id="currentLink">Current Weather</a></h2>
+		<ul id="currentContent" class="pannel inner-pannel short large bare">
 			<li id="summary">summary: @weatherReport.currently.summary</li>
-			<li id="temperature">temperature: @weatherReport.currently.temperature</li>
-			<li id="time">time: @currentTime.ToString()</li>
-			<li id="uvIndex">uvIndex: @weatherReport.currently.uvIndex</li>
-			<li id="windBearing">windBearing: @weatherReport.currently.windBearing</li>
-			<li id="windGust">windGust: @weatherReport.currently.windGust</li>
-			<li id="windSpeed">windSpeed: @weatherReport.currently.windSpeed</li>
+			<li id="temperature">Temperature: @weatherReport.currently.temperature°</li>
+			<li id="feelsLike"><h4>(feels like @weatherReport.currently.apparentTemperature°)</h4></li>
+			<li id="precipIntensity">precipIntensity: @weatherReport.currently.precipIntensity</li>
+			<li id="humidity">humidity: @weatherReport.currently.humidity</li>
+			<li id="cloudCover">cloudCover: @weatherReport.currently.cloudCover</li>
+			<li id="windSpeed">Wind Speed: @weatherReport.currently.windSpeed</li>
 		</ul>
 	</div>
 
-	<div>
-		<h3>Daily Forecast</h3>
-		<ul>
+	<div class="pannel outer-pannel">
+		<h2><a id="dailyLink">Daily Forecast</a></h2>
+		<ul id="dailyContent" class="hidden short bare">
 			@foreach (Datum2 datum in weatherReport.daily.data)
 			{
 				DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 				time = time.AddSeconds(datum.time).ToLocalTime();
-				<li>
-					<h5>Weather on @time.ToShortDateString() for @location</h5>
-					<ul>
-						<li id="apparentTemperatureMaxDaily_@datum.Id">apparentTemperatureMax: @datum.apparentTemperatureMax</li>
-						<li id="apparentTemperatureMinDaily_@datum.Id">apparentTemperatureMin: @datum.apparentTemperatureMin</li>
-						<li id="cloudCoverDaily_@datum.Id">cloudCover: @datum.cloudCover</li>
-						<li id="dewPointDaily_@datum.Id">dewPoint: @datum.dewPoint</li>
-						<li id="humidityDaily_@datum.Id">humidity: @datum.humidity</li>
-						<li id="iconDaily_@datum.Id">icon: @datum.icon</li>
-						<li id="ozoneDaily_@datum.Id">ozone: @datum.ozone</li>
-						<li id="precipIntensityDaily_@datum.Id">precipIntensity: @datum.precipIntensity</li>
-						<li id="precipProbabilityDaily_@datum.Id">precipProbability: @datum.precipProbability</li>
-						<li id="pressureDaily_@datum.Id">pressure: @datum.pressure</li>
-						<li id="summaryDaily_@datum.Id">summary: @datum.summary</li>
-						<li id="temperatureMaxDaily_@datum.Id">temperatureMax: @datum.temperatureMax</li>
-						<li id="temperatureMinDaily_@datum.Id">temperatureMin: @datum.temperatureMin</li>
-						<li id="timeDaily_@datum.Id">time: @time.ToString()</li>
-						<li id="uvIndexDaily_@datum.Id">uvIndex: @datum.uvIndex</li>
-						<li id="windBearingDaily_@datum.Id">windBearing: @datum.windBearing</li>
-						<li id="windGustDaily_@datum.Id">windGust: @datum.windGust</li>
-						<li id="windSpeedDaily_@datum.Id">windSpeed: @datum.windSpeed</li>
+				double cloudCover = datum.cloudCover * 100;
+				double humidity = datum.humidity * 100;
+				<li class="pannel inner-pannel">
+					<h4>Weather on @time.ToShortDateString() for @result.formatted_address</h4>
+					<ul class="horizontal bare">
+						<li class="horizontal" id="summaryDaily_@datum.Id">@datum.summary</li>
+						|
+						<li class="horizontal" id="temperatureMaxDaily_@datum.Id">Highest: @datum.temperatureMax°</li>
+						<li class="horizontal" id="apparentTemperatureMaxDaily_@datum.Id">(feels like @datum.apparentTemperatureMax°)</li>
+						|
+						<li class="horizontal" id="temperatureMinDaily_@datum.Id">Lowest: @datum.temperatureMin°</li>
+						<li class="horizontal" id="apparentTemperatureMinDaily_@datum.Id">(feels like @datum.apparentTemperatureMin°)</li>
+						|
+						<li class="horizontal" id="precipIntensityDaily_@datum.Id">Precipitation: @datum.precipIntensity in.</li>
+						|
+						<li class="horizontal" id="humidityDaily_@datum.Id">Humidity: @humidity%</li>
+						|
+						<li class="horizontal" id="cloudCoverDaily_@datum.Id">Cloud Cover: @cloudCover%</li>
+						|
+						<li class="horizontal" id="windSpeedDaily_@datum.Id">Wind Speed: @datum.windSpeed mph.</li>
 					</ul>
 				</li>
 			}
 		</ul>
 	</div>
 
-	<canvas id="chart1" width="400" height="300"></canvas>
-	<canvas id="chart2" width="400" height="300"></canvas>
-	<canvas id="chart3" width="400" height="300"></canvas>
-	<canvas id="chart4" width="400" height="300"></canvas>
+	<a id="chartLink" class="center">additional information</a>
+	<div id="chartContent" class="hidden">
+		<canvas id="chart1" width="400" height="400"></canvas>
+		<canvas id="chart2" width="400" height="400"></canvas>
+		<canvas id="chart3" width="400" height="400"></canvas>
+		<canvas id="chart4" width="400" height="400"></canvas>
+	</div>
 
-	<div>
+	@*<div>
 		<h3>Hourly Forecast</h3>
 		<ul>
 			@foreach (Datum datum in weatherReport.hourly.data)
@@ -113,7 +105,7 @@
 				</li>
 			}
 		</ul>
-	</div>
+	</div>*@
 }
 else
 {

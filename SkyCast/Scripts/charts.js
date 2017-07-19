@@ -11,3 +11,20 @@ $(document).ready(function () {
     var chart3 = new Chart(ctx3, '@(TempData["chart3"])');
     var chart4 = new Chart(ctx4, '@(TempData["chart4"])');
 });
+
+$('#addressLink').click(function () {
+    $('#addressContent').toggleClass("hidden unhidden")
+});
+
+$('#currentLink').click(function () {
+    $('#currentContent').toggleClass("hidden unhidden")
+});
+
+$('#dailyLink').click(function () {
+    $('#dailyContent').toggleClass("hidden unhidden")
+});
+
+$('#chartLink').click(function () {
+    $('#chartContent').toggleClass("hidden unhidden")
+});
+
