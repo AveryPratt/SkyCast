@@ -6,14 +6,18 @@
 	string controller = ViewBag.Controller;
 }
 
-@using (Html.BeginForm("Index", controller, FormMethod.Post, new { id = "getWeather" }))
-{
-	<input id="locationInput" type="text" name="location" value="@location" placeholder="Location" />
-	@Html.TextBox("dateTime", String.Format("{0:d}", now.ToShortDateString()), new { @class = "datefield", type = "date" });
-	<input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
-}
+<div class="pannel outer-pannel">
+	<div class="pannel inner-pannel">
+		@using (Html.BeginForm("Index", controller, FormMethod.Post, new { id = "getWeather" }))
+		{
+			<input id="locationInput" type="text" name="location" value="@location" placeholder="Location" />
+			@Html.TextBox("dateTime", String.Format("{0:d}", now.ToShortDateString()), new { @class = "datefield", type = "date" });
+			<input type="submit" value="Get Weather Forecast" class="btn btn-primary" />
+		}
 
-@if (!String.IsNullOrEmpty(errorMessage))
-{
-	<div id="errorMessage">@errorMessage</div>
-}
+		@if (!String.IsNullOrEmpty(errorMessage))
+		{
+			<div id="errorMessage">@errorMessage</div>
+		}
+	</div>
+</div>

@@ -24,13 +24,13 @@
 	<div class="pannel outer-pannel">
 		<h2><a id="currentLink">Current Weather</a></h2>
 		<ul id="currentContent" class="pannel inner-pannel short large bare">
-			<li id="summary">summary: @weatherReport.currently.summary</li>
+			<li id="summary">@weatherReport.currently.summary</li>
 			<li id="temperature">Temperature: @weatherReport.currently.temperature°</li>
 			<li id="feelsLike"><h4>(feels like @weatherReport.currently.apparentTemperature°)</h4></li>
-			<li id="precipIntensity">precipIntensity: @weatherReport.currently.precipIntensity</li>
-			<li id="humidity">humidity: @weatherReport.currently.humidity</li>
-			<li id="cloudCover">cloudCover: @weatherReport.currently.cloudCover</li>
-			<li id="windSpeed">Wind Speed: @weatherReport.currently.windSpeed</li>
+			<li id="precipIntensity">Precipitation: @weatherReport.currently.precipIntensity in.</li>
+			<li id="humidity">Humidity: @weatherReport.currently.humidity%</li>
+			<li id="cloudCover">Cloud Cover: @weatherReport.currently.cloudCover%</li>
+			<li id="windSpeed">Wind Speed: @weatherReport.currently.windSpeed mph.</li>
 		</ul>
 	</div>
 
@@ -69,47 +69,17 @@
 
 	<a id="chartLink" class="center">additional information</a>
 	<div id="chartContent" class="hidden">
-		<canvas id="chart1" width="400" height="400"></canvas>
+		<span>Hold up! This part of the site is still under construction and won't display the correct data</span>
+		<iframe width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiYmVhZjYwMDQtMTM5Yi00YTA1LWE1ZTctNTY1MjkyZDdlMjNiIiwidCI6IjEwZjc4NzI3LTBjMTgtNDVhZi1iOWVlLTk3ZTk0ZmQ1YmNkOCIsImMiOjZ9" frameborder="0" allowFullScreen="true"></iframe>
+		@*<canvas id="chart1" width="400" height="400"></canvas>
 		<canvas id="chart2" width="400" height="400"></canvas>
 		<canvas id="chart3" width="400" height="400"></canvas>
-		<canvas id="chart4" width="400" height="400"></canvas>
+		<canvas id="chart4" width="400" height="400"></canvas>*@
 	</div>
-
-	@*<div>
-		<h3>Hourly Forecast</h3>
-		<ul>
-			@foreach (Datum datum in weatherReport.hourly.data)
-			{
-				DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-				time = time.AddSeconds(datum.time).ToLocalTime();
-				<li>
-					<h5>Weather at @time.ToShortTimeString() for @location</h5>
-					<ul>
-						<li id="apparentTemperatureHourly_@datum.Id">apparentTemperature: @datum.apparentTemperature</li>
-						<li id="cloudCoverHourly_@datum.Id">cloudCover: @datum.cloudCover</li>
-						<li id="dewPointHourly_@datum.Id">dewPoint: @datum.dewPoint</li>
-						<li id="humidityHourly_@datum.Id">humidity: @datum.humidity</li>
-						<li id="iconHourly_@datum.Id">icon: @datum.icon</li>
-						<li id="ozoneHourly_@datum.Id">ozone: @datum.ozone</li>
-						<li id="precipIntensityHourly_@datum.Id">precipIntensity: @datum.precipIntensity</li>
-						<li id="precipProbabilityHourly_@datum.Id">precipProbability: @datum.precipProbability</li>
-						<li id="pressureHourly_@datum.Id">pressure: @datum.pressure</li>
-						<li id="summaryHourly_@datum.Id">summary: @datum.summary</li>
-						<li id="temperatureHourly_@datum.Id">temperature: @datum.temperature</li>
-						<li id="timeHourly_@datum.Id">time: @time.ToString()</li>
-						<li id="uvIndexHourly_@datum.Id">uvIndex: @datum.uvIndex</li>
-						<li id="windBearingHourly_@datum.Id">windBearing: @datum.windBearing</li>
-						<li id="windGustHourly_@datum.Id">windGust: @datum.windGust</li>
-						<li id="windSpeedHourly_@datum.Id">windSpeed: @datum.windSpeed</li>
-					</ul>
-				</li>
-			}
-		</ul>
-	</div>*@
+	<br />
+	<br />
 }
 else
 {
 	Session.Remove("query"); // query isn't being displayed
 }
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>

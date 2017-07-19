@@ -80,10 +80,10 @@ namespace SkyCast.Controllers
 						string weatherJson = response.Content.ReadAsStringAsync().Result;
 						data["weatherJson"] = weatherJson;
 						WeatherReport weatherReport = JsonConvert.DeserializeObject<WeatherReport>(weatherJson);
-						data["chart1"] = setChart1(weatherReport);
-						data["chart2"] = setChart2(weatherReport);
-						data["chart3"] = setChart3(weatherReport);
-						data["chart4"] = setChart4(weatherReport);
+						//data["chart1"] = setChart1(weatherReport);
+						//data["chart2"] = setChart2(weatherReport);
+						//data["chart3"] = setChart3(weatherReport);
+						//data["chart4"] = setChart4(weatherReport);
 						return weatherReport;
 					}
 					else

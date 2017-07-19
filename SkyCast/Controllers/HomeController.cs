@@ -30,14 +30,14 @@ namespace SkyCast.Controllers
 
 		public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "SkyCast is a web service that provides you with everything you need to know about the weather. Whether you are planning a weekend fishing trip, or observing the effects of global warming over time, SkyCast is the right tool for the job.";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Contact me at apratt91@gmail.com";
 
             return View();
         }

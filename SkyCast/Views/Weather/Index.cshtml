@@ -9,36 +9,40 @@
 
 @Html.Partial("_SubmissionPartial")
 
-<h3>Previous Results</h3>
-<table class="table">
-    <tr>
-        <th>
-			Location
-        </th>
-        <th>
-			Date
-		</th>
-    </tr>
-
-	@if (Model != null)
-	{
-		foreach (var item in Model)
-		{
+<div class="pannel outer-pannel special">
+	<h3><a id="previousLink">Previous Results</a></h3>
+	<div id="previousContent" class="pannel inner-pannel">
+		<table class="table">
 			<tr>
-				<td>
-					@Html.DisplayFor(modelItem => item.location)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.dateTime)
-				</td>
-				<td>
-					@Html.ActionLink("View", "Details", new { id = item.Id }) |
-					@Html.ActionLink("Delete", "Delete", new { id = item.Id })
-				</td>
+				<th>
+					Location
+				</th>
+				<th>
+					Date
+				</th>
 			</tr>
-		}
-	}
-</table>
+
+			@if (Model != null)
+			{
+				foreach (var item in Model)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.location)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.dateTime)
+						</td>
+						<td>
+							@Html.ActionLink("View", "Details", new { id = item.Id }) |
+							@Html.ActionLink("Delete", "Delete", new { id = item.Id })
+						</td>
+					</tr>
+				}
+			}
+		</table>
+	</div>
+</div>
 
 @Html.Partial("_ResultsPartial")
 

@@ -28,3 +28,6 @@ $('#chartLink').click(function () {
     $('#chartContent').toggleClass("hidden unhidden")
 });
 
+$('#previousLink').click(function () {
+    $('#previousContent').toggleClass("hidden unhidden")
+});
