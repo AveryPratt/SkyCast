@@ -28,11 +28,11 @@ namespace SkyCast.App_Start
 
 		public static ClientAssertionCertificate AssertionCert { get; set; }
 
-		public static void GetCert()
-		{
-			var clientAssertionCertPfx = CertificateHelper.FindCertificateByThumbprint(WebConfigurationManager.AppSettings["thumbprint"]);
-			AssertionCert = new ClientAssertionCertificate(WebConfigurationManager.AppSettings["clientid"], clientAssertionCertPfx);
-		}
+		//public static void GetCert()
+		//{
+		//	var clientAssertionCertPfx = CertificateHelper.FindCertificateByThumbprint(WebConfigurationManager.AppSettings["thumbprint"]);
+		//	AssertionCert = new ClientAssertionCertificate(WebConfigurationManager.AppSettings["clientid"], clientAssertionCertPfx);
+		//}
 
 		public static async Task<string> GetAccessToken(string authority, string resource, string scope)
 		{
@@ -41,24 +41,24 @@ namespace SkyCast.App_Start
 			return result.AccessToken;
 		}
 	}
-	public static class CertificateHelper
-	{
-		public static X509Certificate2 FindCertificateByThumbprint(string findValue)
-		{
-			X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-			try
-			{
-				store.Open(OpenFlags.ReadOnly);
-				X509Certificate2Collection col = store.Certificates.Find(X509FindType.FindByThumbprint,
-					findValue, false);
-				if (col == null || col.Count == 0)
-					return null;
-				return col[0];
-			}
-			finally
-			{
-				store.Close();
-			}
-		}
-	}
+	//public static class CertificateHelper
+	//{
+	//	public static X509Certificate2 FindCertificateByThumbprint(string findValue)
+	//	{
+	//		X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+	//		try
+	//		{
+	//			store.Open(OpenFlags.ReadOnly);
+	//			X509Certificate2Collection col = store.Certificates.Find(X509FindType.FindByThumbprint,
+	//				findValue, false);
+	//			if (col == null || col.Count == 0)
+	//				return null;
+	//			return col[0];
+	//		}
+	//		finally
+	//		{
+	//			store.Close();
+	//		}
+	//	}
+	//}
 }

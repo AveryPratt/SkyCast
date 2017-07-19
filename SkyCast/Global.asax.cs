@@ -15,13 +15,10 @@ namespace SkyCast
     {
         protected void Application_Start()
 		{
-			// I put my GetToken method in a Utils class. Change for wherever you placed your method.
+			//Utils.GetCert();
+			//var kv = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(Utils.GetAccessToken));
 			var kv = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(Utils.GetToken));
-
-			var sec = kv.GetSecretAsync(WebConfigurationManager.AppSettings["SecretUri"]).Result;
-
-			//I put a variable in a Utils class to hold the secret for general  application use.
-			Utils.EncryptSecret = sec.Value;
+			
 			AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

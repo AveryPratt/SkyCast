@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 
 namespace SkyCast.Controllers
@@ -23,7 +24,7 @@ namespace SkyCast.Controllers
 				data["errorMessage"] = "Unrecognizable date format.";
 				return null;
 			}
-			string geoKey = Environment.GetEnvironmentVariable("GEOKEY");
+			string geoKey = WebConfigurationManager.AppSettings["geoKey"];
 			string geoUri = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", location, geoKey);
 			// call Geo API
 			try
@@ -50,7 +51,7 @@ namespace SkyCast.Controllers
 
 		public static WeatherReport GetWeatherForecast(ref TempDataDictionary data, GeoReport geoReport)
 		{
-			string weatherKey = Environment.GetEnvironmentVariable("WEATHERKEY");
+			string weatherKey = WebConfigurationManager.AppSettings["weatherKey"];
 			string weatherUri;
 			DateTime? dateTime = (DateTime?)data["datetime"];
 
